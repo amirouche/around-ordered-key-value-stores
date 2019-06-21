@@ -24,4 +24,5 @@ check:
 
 repl:
 	rm -rf /tmp/wt
+	mkdir -p /tmp/wt
 	cd submodules/arew && make repl
