@@ -16,7 +16,7 @@ chez:
 arew:
 	cd submodules/arew/src/srfi && scheme --program link-dirs.chezscheme.sps
 
-install: wiredtiger chez arew  ## compile and install wiredtiger and chez scheme fork
+init: wiredtiger chez arew  ## compile and install wiredtiger and chez scheme fork
 
 check:
 	cd submodules/arew && make check2
