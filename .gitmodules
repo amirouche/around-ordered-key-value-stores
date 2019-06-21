@@ -1,0 +1,9 @@
+[submodule "submodules/arew"]
+	path = submodules/arew
+	url = https://git.sr.ht/~amz3/chez-scheme-arew
+[submodule "submodules/wiredtiger"]
+	path = submodules/wiredtiger
+	url = https://github.com/wiredtiger/wiredtiger
+[submodule "submodules/ChezScheme"]
+	path = submodules/ChezScheme
+	url = https://github.com/scheme-live/ChezScheme
