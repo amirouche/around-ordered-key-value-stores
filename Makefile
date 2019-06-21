@@ -10,7 +10,7 @@ wiredtiger:
 	sudo ldconfig
 
 chez:
-	cd submodules/ChezScheme/ && ./configure --enable-threads
+	cd submodules/ChezScheme/ && ./configure --threads
 	cd submodules/ChezScheme/ && make
 	cd submodules/ChezScheme/ && sudo make install
 
@@ -21,3 +21,7 @@ install: wiredtiger chez arew  ## compile and install wiredtiger and chez scheme
 
 check:
 	cd submodules/arew && make check2
+
+repl:
+	rm -rf /tmp/wt
+	cd submodules/arew && make repl
