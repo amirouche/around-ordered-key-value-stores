@@ -3,6 +3,7 @@ help: ## This help.
 
 
 wiredtiger:
+	cd submodules/wiredtiger && ./autogen.sh
 	cd submodules/wiredtiger && ./configure
 	cd submodules/wiredtiger && make
 	cd submodules/wiredtiger && sudo make install
