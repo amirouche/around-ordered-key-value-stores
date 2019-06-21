@@ -19,9 +19,9 @@ arew:
 init: wiredtiger chez arew  ## compile and install wiredtiger and chez scheme fork
 
 check:
-	cd submodules/arew && make check2
+	cd submodules/arew && PATH=$(PWD)/local/bin:$(PATH) make check2
 
 repl:
 	rm -rf /tmp/wt
 	mkdir -p /tmp/wt
-	cd submodules/arew && LD_PRELOAD=$(PWD)/local/lib/libwiredtiger.so PATH=$(PWD)/local/bin:$(PATH) make repl
+	cd submodules/arew && PATH=$(PWD)/local/bin:$(PATH) make repl
