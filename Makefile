@@ -4,15 +4,14 @@ help: ## This help.
 
 wiredtiger:
 	cd submodules/wiredtiger && ./autogen.sh
-	cd submodules/wiredtiger && ./configure
+	cd submodules/wiredtiger && ./configure --prefix=$(PWD)/local
 	cd submodules/wiredtiger && make
-	cd submodules/wiredtiger && sudo make install
-	sudo ldconfig
+	cd submodules/wiredtiger && make install
 
 chez:
-	cd submodules/ChezScheme/ && ./configure --threads
+	cd submodules/ChezScheme/ && ./configure --threads --installprefix=$(PWD)/local
 	cd submodules/ChezScheme/ && make
-	cd submodules/ChezScheme/ && sudo make install
+	cd submodules/ChezScheme/ && make install
 
 arew:
 	cd submodules/arew/src/srfi && scheme --program link-dirs.chezscheme.sps
@@ -25,4 +24,4 @@ check:
 repl:
 	rm -rf /tmp/wt
 	mkdir -p /tmp/wt
-	cd submodules/arew && make repl
+	cd submodules/arew && LD_PRELOAD=$(PWD)/local/lib/libwiredtiger.so PATH=$(PWD)/local/bin:$(PATH) make repl
