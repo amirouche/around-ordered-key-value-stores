@@ -7,3 +7,9 @@
 [submodule "submodules/ChezScheme"]
 	path = submodules/ChezScheme
 	url = https://github.com/scheme-live/ChezScheme
+[submodule "submodules/srfi-167"]
+	path = submodules/srfi-167
+	url = https://github.com/scheme-requests-for-implementation/srfi-167
+[submodule "submodules/srfi-168"]
+	path = submodules/srfi-168
+	url = https://github.com/scheme-requests-for-implementation/srfi-168
