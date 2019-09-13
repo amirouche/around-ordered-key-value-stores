@@ -19,6 +19,8 @@ check-srfi-167:
 check-srfi-168:
 	./scheme --program submodules/srfi-168/srfi/tests.scm
 
+check: check-srfi-167 check-srfi-168
+	./scheme --program make-check.scm
 
 repl:  ## Run the REPL
 	cd submodules/arew && PATH=$(PWD)/local/bin:$(PATH) make repl

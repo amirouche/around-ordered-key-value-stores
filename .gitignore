@@ -7,3 +7,5 @@
 .#*.scm
 
 local/
+
+profile/
