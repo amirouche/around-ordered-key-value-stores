@@ -4,7 +4,14 @@ help: ## This help.
 init-arew:
 	cd submodules/arew/src/srfi && scheme --program link-dirs.chezscheme.sps
 
-init: init-arew  ## init the repository for development
+init-wiredtiger:
+	cd submodules/wiredtiger/ && ./autogen.sh
+	cd submodules/wiredtiger/ && ./configure --prefix="$(PWD)/local"
+	cd submodules/wiredtiger/ && make -j 2
+	cd submodules/wiredtiger/ && make install
+
+
+init: init-wiredtiger init-arew  ## init the repository for development
 
 check-srfi-167:
 	./scheme --program submodules/srfi-167/srfi/tests.scm
