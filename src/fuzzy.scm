@@ -76,9 +76,13 @@
                           (out out))
                 (if (eof-object? value)
                     (loop1 (cdr trigrams) out)
-                    (loop2 (generator) (bag-adjoin! out (list-ref (pk (unpack (car value))) 2)))))))))
+                    (let* ((key (unpack (car value)))
+                           (value (cadr (drop key (length (fuzzy-prefix fuzzy))))))
+                      ;; TODO: drop prefix instead
+                      (loop2 (generator) (bag-adjoin! out value)))))))))
 
     (define (levenshtein s t)
+      ;; https://rosettacode.org/wiki/Levenshtein_distance#Scheme
       (define (%levenshtein s sl t tl)
         (cond ((zero? sl) tl)
               ((zero? tl) sl)
@@ -94,8 +98,10 @@
 
     (define (fuzzy-search transaction fuzzy string)
       (let* ((out (fuzzy-bag transaction fuzzy string))
+             (out (sort (lambda (x y) (> (cdr x) (cdr y))) out))
+             (out (take out 10))
              (out (map (lambda (x) (cons (car x) (- (cdr x) (levenshtein string (car x)))))
-                       out)))
-        (sort (lambda (x y) (> (cdr x) (cdr y))) out)))
-
+                       out))
+             (out (sort (lambda (x y) (> (cdr x) (cdr y))) out)))
+        out))
     ))
