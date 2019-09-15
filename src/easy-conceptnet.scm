@@ -60,7 +60,9 @@
     (call-with-values next
       (lambda (value next)
         (when value
-          (display ".")
+          ;; XXX: only for debugging, watch "wt/" directory to know
+          ;; whether the index command make progress or not (display
+          ;; ".")
           (okvs-in-transaction database
                                (lambda (transaction)
                                  (nstore-add! transaction triplestore
