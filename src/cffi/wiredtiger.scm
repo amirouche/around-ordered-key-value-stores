@@ -127,6 +127,7 @@
        [open-cursor void*]
        [alter void*]
        [create void*]
+       [import void*]
        [compact void*]
        [drop void*]
        [join void*]
