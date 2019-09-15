@@ -13,3 +13,9 @@
 [submodule "submodules/srfi-173"]
 	path = submodules/srfi-173
 	url = https://github.com/scheme-requests-for-implementation/srfi-173
+[submodule "submodules/easy-conceptnet"]
+	path = submodules/easy-conceptnet
+	url = https://github.com/amirouche/easy-conceptnet/
+[submodule "submodules/chez-exe"]
+	path = submodules/chez-exe
+	url = https://github.com/gwatt/chez-exe/
