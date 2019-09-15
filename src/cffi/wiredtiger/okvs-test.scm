@@ -34,14 +34,14 @@
     (define database-open-close
       (test*
        #t
-       (let ((okvs (okvs '((home . "wt") (create? . #t)))))
+       (let ((okvs (okvs-open '((home . "wt") (create? . #t)))))
          (okvs-close okvs)
          #t)))
 
     (define set-and-get
       (test*
        #vu8(1 2 3 42)
-       (let ((okvs (okvs '((home . "wt") (create? . #t)))))
+       (let ((okvs (okvs-open '((home . "wt") (create? . #t)))))
          ;; set
          (let ((transaction (okvs-transaction-begin okvs)))
            (okvs-set! transaction #vu8(13 37) #vu8(1 2 3 42))
@@ -56,7 +56,7 @@
     (define set-overwrite-and-ref
       (test*
        #vu8(42)
-       (let ((okvs (okvs '((home . "wt") (create? . #t)))))
+       (let ((okvs (okvs-open '((home . "wt") (create? . #t)))))
          ;; set
          (let ((transaction (okvs-transaction-begin okvs)))
            (okvs-set! transaction #vu8(13 37) #vu8(1 2 3 42))
@@ -75,7 +75,7 @@
     (define range
       (test*
        (list (cons #vu8(20 16) #vu8(2)) (cons #vu8(20 17) #vu8(3)))
-       (let ((okvs (okvs '((home . "wt") (create? . #t)))))
+       (let ((okvs (okvs-open '((home . "wt") (create? . #t)))))
          ;; set
          (let ((transaction (okvs-transaction-begin okvs)))
            (okvs-set! transaction #vu8(20 18) #vu8(4))
@@ -94,7 +94,7 @@
     (define lexicographic-range
       (test*
        (list (cons #vu8(20 16) #vu8(2)) (cons #vu8(20 17 01) #vu8(3)))
-       (let ((okvs (okvs '((home . "wt") (create? . #t)))))
+       (let ((okvs (okvs-open '((home . "wt") (create? . #t)))))
          ;; set
          (let ((transaction (okvs-transaction-begin okvs)))
            (okvs-set! transaction #vu8(20 18) #vu8(4))
@@ -117,7 +117,7 @@
          (#vu8(20 16 1) . #vu8(2))
          (#vu8(20 17) . #vu8(3))
          (#vu8(20 17 1) . #vu8(2)))
-       (let ((okvs (okvs '((home . "wt") (create? . #t)))))
+       (let ((okvs (okvs-open '((home . "wt") (create? . #t)))))
          ;; set
          (let ((transaction (okvs-transaction-begin okvs)))
            (okvs-set! transaction #vu8(20 17 01) #vu8(2))
@@ -129,7 +129,7 @@
            (okvs-transaction-commit transaction))
          ;; get
          (let* ((transaction (okvs-transaction-begin okvs))
-                (out (generator->list (okvs-prefix transaction #vu8(20)))))
+                (out (generator->list (okvs-prefix-range transaction #vu8(20)))))
            (okvs-close okvs)
            out))))
 
@@ -137,7 +137,7 @@
       (test*
        '((#vu8(20 17) . #vu8(3))
          (#vu8(20 16 1) . #vu8(2)))
-       (let ((okvs (okvs '((home . "wt") (create? . #t)))))
+       (let ((okvs (okvs-open '((home . "wt") (create? . #t)))))
          ;; set
          (let ((transaction (okvs-transaction-begin okvs)))
            (okvs-set! transaction #vu8(20 17 01) #vu8(2))
@@ -149,11 +149,11 @@
            (okvs-transaction-commit transaction))
          ;; get
          (let* ((transaction (okvs-transaction-begin okvs))
-                (out (generator->list (okvs-prefix transaction
-                                                   #vu8(20)
-                                                   '((offset . 1)
-                                                     (limit . 2)
-                                                     (reverse? #t))))))
+                (out (generator->list (okvs-prefix-range transaction
+                                                         #vu8(20)
+                                                         '((offset . 1)
+                                                           (limit . 2)
+                                                           (reverse? #t))))))
            (okvs-close okvs)
            out))))
 
@@ -166,7 +166,7 @@
     (define in-transaction-with-database
       (test*
        (list #vu8(42) #vu8(42))
-       (let ((okvs (okvs '((home . "wt") (create? . #t)))))
+       (let ((okvs (okvs-open '((home . "wt") (create? . #t)))))
          (let ((out (okvs-in-transaction okvs query)))
            (okvs-close okvs)
            out))))
@@ -177,7 +177,7 @@
        (let ((keys '(#vu8(1 42 0 20 2 55 97 98 53 118 54 110 103 113 119 49 117 53 121 111 57 50 104 110 107 105 109 112 105 104 0 21 102 21 103)
                          #vu8(1 42 0 21 1 21 102 21 103 2 55 97 98 53 118 54 110 103 113 119 49 117 53 121 111 57 50 104 110 107 105 109 112 105 104 0)
                          #vu8(1 42 0 21 2 21 103 2 55 97 98 53 118 54 110 103 113 119 49 117 53 121 111 57 50 104 110 107 105 109 112 105 104 0 21 102))))
-         (let ((okvs (okvs '((home . "wt") (create? . #t)))))
+         (let ((okvs (okvs-open '((home . "wt") (create? . #t)))))
            ;; set
            (let ((transaction (okvs-transaction-begin okvs)))
              (let loop ((keys keys))
@@ -188,7 +188,7 @@
            ;; get
            (let* ((transaction (okvs-transaction-begin okvs))
                   (prefix #vu8(1 42 0 20 2 57 98 57 55 54 97 104 97 104 50 51 113 110 52 102 121 97 99 49 53 120 99 118 48 100 0))
-                  (out (generator->list (okvs-prefix transaction prefix))))
+                  (out (generator->list (okvs-prefix-range transaction prefix))))
              (okvs-close okvs)
              out)))))
 

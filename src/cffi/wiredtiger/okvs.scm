@@ -19,7 +19,7 @@
 ;;
 (define-library (cffi wiredtiger okvs)
 
-  (export okvs
+  (export okvs-open
           okvs?
           okvs-close
           okvs-debug
@@ -33,7 +33,7 @@
           okvs-set!
           okvs-delete!
           okvs-range
-          okvs-prefix)
+          okvs-prefix-range)
 
   (import (scheme base)
           (only (scheme bytevector)
@@ -192,7 +192,7 @@ directory"
                 (wt:session-close session "")))
             (make-okvs cnx isolation '())))))
 
-    (define okvs
+    (define okvs-open
       (case-lambda
         ((config) (%okvs config))
         (() (%okvs '()))))
@@ -464,7 +464,7 @@ directory"
         ;; increment first byte, reverse and return the bytevector
         (u8-list->bytevector (reverse! (cons (+ 1 (car bytes)) (cdr bytes))))))
 
-    (define (okvs-prefix transaction prefix . config)
+    (define (okvs-prefix-range transaction prefix . config)
       (apply okvs-range transaction prefix #t (strinc prefix) #f config))
 
     ))
