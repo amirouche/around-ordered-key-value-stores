@@ -156,6 +156,17 @@ version: 0.0.0
   (untangle (lambda ()
               (run-server "127.0.0.1" port handler))))
 
+(define (usage)
+  (display "Usage:
+
+  ./easy-conceptnet index conceptnet.tsv
+  ./easy-conceptnet serve 8888
+"))
+
+(when (< (length (command-line)) 2)
+  (usage)
+  (exit 0))
+
 (define command (cadr (command-line)))
 
 (cond
@@ -163,7 +174,7 @@ version: 0.0.0
   (index (caddr (command-line))))
  ((string=? command "serve")
   (serve (string->number (caddr (command-line)))))
- (else (error 'easy-conceptnet "unknown command")))
+ (else (usage)))
 
 
 
