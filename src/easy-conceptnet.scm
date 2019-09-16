@@ -149,7 +149,8 @@ version: 0.0.0
       (("") (values 200 text/plain "Hello, world!"))
       (("api") (values 200 text/plain hello))
       (("api" "lookup" "c" lang label) (route/lookup-concept lang label))
-      (("api" "reverse" "c" lang label) (route/reverse-concept lang label)))))
+      (("api" "reverse" "c" lang label) (route/reverse-concept lang label))
+      (_ (values 404 #f "")))))
 
 (define (serve port)
   (untangle (lambda ()
