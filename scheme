@@ -7,7 +7,7 @@ SRFI167="$PWD/submodules/srfi-167/"
 SRFI168="$PWD/submodules/srfi-168/"
 SRFI173="$PWD/submodules/srfi-173/"
 
-export CHEZSCHEMELIBDIRS="$PWD/src:$AREW/src/:$PWD/src:$SRFI167/srfi:$SRFI168/srfi:$SRFI173"
+export CHEZSCHEMELIBDIRS="$PWD/src:$AREW/src/:$SRFI167/srfi:$SRFI168/srfi:$SRFI173"
 unset CHEZSCHEMELIBEXTS
 
 rlwrap "$AREW/local/bin/scheme" --boot "$AREW/local/lib/csv9.5.3/ta6le/petite.boot" --boot "$AREW/local/lib/csv9.5.3/ta6le/scheme.boot" --debug-on-exception --optimize-level 0 --eedisable $@
