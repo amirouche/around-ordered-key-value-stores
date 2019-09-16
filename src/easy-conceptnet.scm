@@ -100,7 +100,7 @@ version: 0.0.0
 
 ")
 
-(define (route/concept lang label)
+(define (route/lookup-concept lang label)
   (let ((concept (string-append "/c/" lang "/" label)))
     (okvs-in-transaction database
       (lambda (transaction)
@@ -127,7 +127,7 @@ version: 0.0.0
     (match path
       (("") (values 200 text/plain "Hello, world!"))
       (("api") (values 200 text/plain hello))
-      (("api" "c" lang label) (route/concept lang label)))))
+      (("api" "lookup" "c" lang label) (route/lookup-concept lang label)))))
 
 (define (serve port)
   (untangle (lambda ()
