@@ -121,13 +121,35 @@ version: 0.0.0
                                      (hashmap-ref binding 'target)
                                      "\n")))))))))
 
+(define (route/reverse-concept lang label)
+  (let ((concept (string-append "/c/" lang "/" label)))
+    (okvs-in-transaction database
+      (lambda (transaction)
+        (let ((generator (nstore-from transaction triplestore
+                                      (list (nstore-var 'source)
+                                            (nstore-var 'relation)
+                                            concept))))
+          (let loop ((binding (generator))
+                     (out "source\trelation\ttarget\n"))
+            (if (eof-object? binding)
+                (values 200 text/plain out)
+                (loop (generator)
+                      (string-append out
+                                     (hashmap-ref binding 'source)
+                                     "\t"
+                                     (hashmap-ref binding 'relation)
+                                     "\t"
+                                     concept
+                                     "\n")))))))))
+
 (define (handler request port)
   (let* ((line (read-request-line port))
          (path (drop (string-split (list-ref (string-split line " ") 1) "/") 1)))
     (match path
       (("") (values 200 text/plain "Hello, world!"))
       (("api") (values 200 text/plain hello))
-      (("api" "lookup" "c" lang label) (route/lookup-concept lang label)))))
+      (("api" "lookup" "c" lang label) (route/lookup-concept lang label))
+      (("api" "reverse" "c" lang label) (route/reverse-concept lang label)))))
 
 (define (serve port)
   (untangle (lambda ()
