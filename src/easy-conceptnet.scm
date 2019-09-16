@@ -14,7 +14,6 @@
 (import (nstore))
 (import (pack))
 (import (cffi wiredtiger okvs))
-(import (fuzzy))
 
 (import (matchable))
 
@@ -28,8 +27,6 @@
 (define triplestore
   (let ((engine (nstore-engine okvs-ref okvs-set! okvs-delete! okvs-prefix-range pack unpack)))
     (nstore engine (list 0) '(subject predicate object))))
-
-(define fuzz (fuzzy (list 1)))
 
 (define tab (list->string (list #\tab)))
 
@@ -68,26 +65,7 @@
                                  (nstore-add! transaction triplestore
                                               (list (list-ref value 1)
                                                     (list-ref value 0)
-                                                    (list-ref value 2)))
-                                 (let ((start-word (concept->word (list-ref value 1)))
-                                       (end-word (concept->word (list-ref value 2))))
-                                   (fuzzy-add! transaction
-                                               fuzz
-                                               start-word)
-                                   (fuzzy-add! transaction
-                                               fuzz
-                                               end-word)
-                                   ;; also store mapping between word and
-                                   ;; concept to be able to retrieve
-                                   ;; concepts given a word or expression.
-                                   (nstore-add! transaction triplestore
-                                                (list start-word
-                                                      "fuzzy"
-                                                      (list-ref value 1)))
-                                   (nstore-add! transaction triplestore
-                                                (list end-word
-                                                      "fuzzy"
-                                                      (list-ref value 2))))))
+                                                    (list-ref value 2)))))
           (loop next))))))
 
 (define (bytes->string lst)
@@ -103,7 +81,6 @@
 
 
 (define text/plain (make-header-hash-table))
-
 (hash-table-set! text/plain 'Content-Type "text/plain")
 
 (define hello "
@@ -122,30 +99,6 @@ www: https://github.com/amirouche/easy-conceptnet/
 version: 0.0.0
 
 ")
-
-(define (format-candidate candidate score)
-  (string-append (hashmap-ref candidate 'concept) "\t" (number->string score) "\n"))
-
-(define (format-candidates transaction word score)
-  (let ((generator (nstore-from transaction triplestore
-                                (list word "fuzzy" (nstore-var 'concept)))))
-    (let loop ((candidate (generator))
-               (out ""))
-      (if (eof-object? candidate)
-          out
-          (loop (generator) (string-append out (format-candidate candidate score)))))))
-
-(define (route/fuzzy-search token)
-  (okvs-in-transaction database
-    (lambda (transaction)
-      (let loop ((word+score (fuzzy-search transaction fuzz token))
-                 (out "concept\tscore\n"))
-        (if (null? word+score)
-            (values 200 text/plain out)
-            (loop (cdr word+score)
-                  (string-append out (format-candidates transaction
-                                                        (caar word+score)
-                                                        (cdar word+score)))))))))
 
 (define (route/concept lang label)
   (let ((concept (string-append "/c/" lang "/" label)))
@@ -174,8 +127,7 @@ version: 0.0.0
     (match path
       (("") (values 200 text/plain "Hello, world!"))
       (("api") (values 200 text/plain hello))
-      (("api" "c" lang label) (route/concept lang label))
-      (("api" "fuzzy-search" token) (route/fuzzy-search token)))))
+      (("api" "c" lang label) (route/concept lang label)))))
 
 (define (serve port)
   (untangle (lambda ()
