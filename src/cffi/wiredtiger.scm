@@ -47,7 +47,12 @@
     ;; ffi helpers
 
     (define (bytevector->pointer bv)
-      (#%$object-address bv (+ (foreign-sizeof 'void*) 1)))
+      (let ((pointer (foreign-alloc (* 8 (bytevector-length bv)))))
+        (let loop ((index 0))
+          (unless (= index (bytevector-length bv))
+            (foreign-set! 'unsigned-8 pointer index (bytevector-u8-ref bv index))
+            (loop (+ index 1))))
+        pointer))
 
     (define-syntax-rule (check code)
       (let ((code* code))
@@ -282,6 +287,7 @@
 
     (define (item-free item)
       (let ((data (ftype-ref %item (data) item)))
+        (foreign-free data)
         (foreign-free (ftype-pointer-address item))))
 
     (define (cursor-value-ref cursor)
